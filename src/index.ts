@@ -47,7 +47,14 @@ export function no(...text: any) {
   console.log(chalk.red(text))
 }
 
-export async function search(folder: string) {
+export async function search(folder: string): Promise<{
+  totalResults: number
+  results: {
+    type: string
+    name: string
+    path: string
+  }[]
+}> {
   const config = loadConfig()
   if (
     config.username == '' ||
@@ -75,5 +82,9 @@ export async function search(folder: string) {
     process.exit(1)
   }
   return searchResult.data
+}
+
+export const isConfigKey = (key: string) => {
+  return Object.hasOwn(CONFIGFILEFIELD, key)
 }
 
