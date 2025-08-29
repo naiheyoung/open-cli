@@ -12,7 +12,7 @@ const CONFIGFILEFIELD = {
   username: '',
   password: '',
   serverUrl: '',
-  limit: 5
+  limit: 10
 }
 
 export async function hello(name: string) {
@@ -73,7 +73,7 @@ export async function search(folder: string): Promise<{
         search: folder,
         json: 1,
         path_column: 1,
-        c: config.limit || 5
+        c: config.limit || CONFIGFILEFIELD.limit
       }
     }
   )

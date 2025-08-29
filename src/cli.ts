@@ -14,6 +14,8 @@ cli
       cli.outputHelp()
       process.exit(0)
     }
+    let offset = 0
+    let selected: string | null = null
     const mode = options.e ? 'explorer' : 'code'
     const { totalResults, results } = await search(folder)
     if (totalResults < 1) {
@@ -25,20 +27,40 @@ cli
         `${mode} "${path.resolve(results[0].path, results[0].name)}"`
       ).unref()
     } else {
-      const choose = await prompts({
-        type: 'select',
-        name: 'folder',
-        message: `Multiple results found for "${folder}". Please choose:`,
-        choices: results.map((f: any, i: number) => ({
+      do {
+        const slice = results.slice(offset, offset + 5)
+        const choices = slice.map((f: any, i: number) => ({
           title: `${i + 1}. ${
             f.type === 'folder' ? '🗂️  ' + f.name : '📑 ' + f.name
           }`,
           description: f.path,
           value: path.resolve(f.path, f.name)
         }))
-      })
-      if (choose.folder) {
-        exec(`${mode} "${choose.folder}"`).unref()
+        if (offset + 5 < results.length) {
+          choices.push({
+            title: '👉 More...',
+            value: '__MORE__',
+            description: 'See More...'
+          })
+        }
+        const choose = await prompts({
+          type: 'select',
+          name: 'folder',
+          message: `Multiple results found for "${folder}". Please choose:`,
+          choices
+        })
+        if (choose.folder === '__MORE__') {
+          offset += 5
+          continue
+        }
+        if (choose.folder) {
+          selected = choose.folder
+        } else {
+          process.exit(1)
+        }
+      } while (!selected)
+      if (selected) {
+        exec(`${mode} "${selected}"`).unref()
       }
     }
   })
