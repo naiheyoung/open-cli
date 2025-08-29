@@ -1,6 +1,6 @@
 {
   "name": "@naiheyoung/open-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packageManager": "pnpm@10.13.1",
   "description": "find local files and open them.",
   "homepage": "https://github.com/naiheyoung/open-cli#readme",
